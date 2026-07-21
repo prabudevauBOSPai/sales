@@ -130,6 +130,8 @@ body {
 .mac-dock { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); padding: 8px; border-radius: 99px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid rgba(255, 255, 255, 0.7); display: flex; gap: 8px; align-items: center; pointer-events: auto; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 .mac-dock .btn { border-radius: 99px; padding: 10px 24px; font-size: 14px; box-shadow: var(--shadow-xs); }
 .mac-dock .btn-ghost { box-shadow: none; }
+.floating-icon-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
+.floating-icon-btn:hover { background: var(--gray-50); color: var(--gray-900); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .dock-status { padding: 0 12px 0 16px; font-size: 13px; font-weight: 500; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
 .dock-divider { width: 1px; height: 24px; background: var(--gray-300); margin: 0 4px; }
 .dock-buttons { display: flex; gap: 8px; }
@@ -661,14 +663,14 @@ async function startExecution(modeOverride) {
       document.getElementById('dock-buttons-container').innerHTML = `
         <button class="btn btn-warning" onclick="showReason('tdl')">Turn Down</button>
         <button class="btn btn-destructive" onclick="showReason('lost')">Lost</button>
-        <button class="btn btn-outline" onclick="resetToIdle()">Start Over</button>
+        <button class="floating-icon-btn" onclick="resetToIdle()" title="Start Over"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg></button>
       `;
     } else {
-      document.getElementById('dock-buttons-container').innerHTML = `<button class="btn btn-outline" onclick="resetToIdle()">Start Over</button>`;
+      document.getElementById('dock-buttons-container').innerHTML = `<button class="floating-icon-btn" onclick="resetToIdle()" title="Start Over"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg></button>`;
     }
     setTimeout(() => { document.getElementById('left-panel').scrollTo({ top: 0, behavior: 'smooth' }); }, 500);
   } else {
-    document.getElementById('dock-buttons-container').innerHTML = `<button class="btn btn-outline" onclick="resetToIdle()">Start Over</button>`;
+    document.getElementById('dock-buttons-container').innerHTML = `<button class="floating-icon-btn" onclick="resetToIdle()" title="Start Over"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg></button>`;
   }
 }
 
