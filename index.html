@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Prototype: PM #2905 Stage 4 Unified + Dock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Design Tokens ── */
+:root {
+  --bg: #f5f5f7;
+  --fg: #1d1d1f;
+  --border: #d2d2d7;
+  --primary: #0071e3;
+  --primary-hover: #0077ED;
+  --success: #34c759;
+  --success-soft: #ecfdf5;
+  --tdl-color: #eab308; /* Yellow */
+  --lost-color: #f97316; /* Orange */
+  
+  /* Dynamic Theme Color (defaults to green for Create) */
+  --theme-color: var(--success);
+
+  --muted: #86868b;
+  --gray-50: #f9fafb;
+  --gray-100: #f5f5f7;
+  --gray-200: #e5e5ea;
+  --gray-300: #d1d1d6;
+  --gray-400: #aeaeb2;
+  --gray-500: #8e8e93;
+  --gray-600: #636366;
+  --gray-700: #48484a;
+  --gray-800: #3a3a3c;
+  --gray-900: #1a1a1c;
+  --shadow-xs: 0 0.5px 1px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 0.5px 1.5px rgba(0,0,0,0.04);
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+body.theme-tdl { --theme-color: var(--tdl-color); }
+body.theme-lost { --theme-color: var(--lost-color); }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px; color: var(--fg); background: var(--bg); line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Global Header ── */
+.app-container { display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: #fff; }
+.global-header { flex-shrink: 0; background: #fff; display: flex; flex-direction: column; z-index: 100; }
+.gh-top { display: flex; align-items: center; justify-content: space-between; padding: 6px 24px; border-bottom: 1px solid var(--border); }
+.gh-left { display: flex; align-items: center; gap: 16px; }
+.back-btn { color: var(--gray-400); font-size: 20px; cursor: pointer; text-decoration: none; }
+.back-btn:hover { color: var(--gray-800); }
+.gh-title { font-size: 20px; font-weight: 500; color: var(--gray-900); line-height: 1.2; }
+.gh-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.gh-subtitle .badge { background: var(--gray-100); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+
+.gh-right { display: flex; align-items: center; gap: 12px; }
+.property-select { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; color: var(--gray-700); cursor: pointer; font-weight: 500; }
+.property-select span { color: var(--muted); font-weight: 500; }
+.icon-btn { display: flex; align-items: center; justify-content: center; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; color: var(--gray-600); }
+.time-badge { display: flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+.time-badge.red { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.status-badge { padding: 6px 12px; background: var(--gray-100); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--gray-700); }
+
+
+
+.gh-stepper { display: flex; gap: 2px; padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--border); }
+.step { flex: 1; display: flex; }
+.step-bar { height: 32px; width: 100%; display: flex; align-items: center; justify-content: space-around; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; position: relative; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%); padding: 0 16px; }
+.step:first-child .step-bar { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 0 50%); border-radius: 4px 0 0 4px; padding-left: 24px; }
+.step:last-child .step-bar { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); border-radius: 0 4px 4px 0; padding-right: 24px; }
+
+.step-bar .time { font-weight: 600; opacity: 0.9; }
+.step-bar .path { font-size: 9px; opacity: 0.7; }
+.step-bar .title { font-weight: 600; }
+
+.step.complete .step-bar { background: #dcfce7; color: #166534; }
+.step.current { flex: 1.5; }
+.step.current .step-bar { background: var(--primary); color: #fff; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.step.current .time, .step.current .path { color: #fff; opacity: 0.9; }
+.step.upcoming .step-bar { background: #f3f4f6; color: #9ca3af; }
+
+/* ── Stage 4 Shell ── */
+.stage-shell { display: flex; width: 100%; flex: 1; min-height: 0; overflow: hidden; background: var(--bg); }
+.left-panel-wrapper { width: 52%; flex-shrink: 0; border-right: 1px solid var(--border); background: #fff; position: relative; display: flex; flex-direction: column; }
+.left-panel { flex: 1; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
+
+.divider { width: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: col-resize; background: transparent; position: relative; z-index: 10; }
+.divider:hover { background: var(--gray-200); }
+.divider .dot { width: 3px; height: 32px; border-radius: 99px; background: var(--gray-300); }
+.divider:hover .dot { background: var(--gray-400); }
+
+.right-panel { flex: 1; min-width: 0; overflow-y: auto; background: var(--gray-50); display: flex; flex-direction: column; }
+.right-inner { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+.right-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; min-height: 36px; }
+.right-title { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px;
+  border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 1px solid var(--border); background: #fff; color: var(--fg);
+  transition: all .15s; text-decoration: none;
+}
+.btn:hover { background: var(--gray-50); }
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-outline { background: #fff; color: var(--primary); border-color: var(--primary); }
+.btn-outline:hover { background: #e8f4fd; }
+
+.btn-warning { background: var(--tdl-color); color: #fff; border-color: var(--tdl-color); }
+.btn-warning:hover { background: #d9a006; }
+.btn-destructive { background: var(--lost-color); color: #fff; border-color: var(--lost-color); }
+.btn-destructive:hover { background: #ea580c; }
+
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-ghost { border: none; background: transparent; color: var(--primary); padding: 4px 12px; }
+.btn-ghost:hover { background: #e8f4fd; }
+.btn-black { background: #1a1a1c; border-color: #1a1a1c; color: #fff; }
+.btn-black:hover { background: #000; }
+
+/* ── Mac Dock Floating Action Bar ── */
+.mac-dock-wrapper { position: absolute; bottom: 32px; left: 0; width: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; z-index: 100; animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.mac-dock { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); padding: 8px; border-radius: 99px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid rgba(255, 255, 255, 0.7); display: flex; gap: 8px; align-items: center; pointer-events: auto; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.mac-dock .btn { border-radius: 99px; padding: 10px 24px; font-size: 14px; box-shadow: var(--shadow-xs); }
+.mac-dock .btn-ghost { box-shadow: none; }
+.dock-status { padding: 0 12px 0 16px; font-size: 13px; font-weight: 500; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
+.dock-divider { width: 1px; height: 24px; background: var(--gray-300); margin: 0 4px; }
+.dock-buttons { display: flex; gap: 8px; }
+.dock-buttons:empty { display: none; }
+.dock-buttons:empty + .dock-divider { display: none; }
+.dock-divider:last-child { display: none; }
+
+/* ── Unified Layout ── */
+.unified-content { padding: 16px 20px 140px; animation: fadeIn 0.3s ease; max-width: 800px; margin: 0 auto; position: relative; }
+.summary-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; }
+.sc-header { text-align: center; font-size: 14px; font-weight: 400; color: var(--gray-800); margin-bottom: 12px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px 12px; font-size: 13px; }
+.summary-grid .label { color: var(--muted); font-size: 12px; margin-bottom: 2px; display: block; }
+.summary-grid .value { font-weight: 500; color: var(--gray-900); }
+
+.field-group { margin-bottom: 16px; transition: opacity 0.3s ease; }
+.field-group.dimmed { opacity: 0.5; pointer-events: none; }
+.field-group-header { display: flex; align-items: center; gap: 12px; padding: 4px 0; font-size: 14px; font-weight: 500; color: var(--gray-800); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-200); margin-bottom: 8px; }
+
+.num-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--gray-200); color: var(--gray-600); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; transition: all 0.3s ease; flex-shrink: 0; }
+.num-icon.running { background: transparent; border: 2px solid var(--primary); border-top-color: transparent; animation: spin 0.8s linear infinite; }
+.num-icon.complete { background: var(--theme-color); color: #fff; transform: scale(1.1); border: none; }
+.num-icon.failed { background: #ff3b30; color: #fff; transform: scale(1.1); border: none; }
+
+.field-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 0 4px 38px; font-size: 13px; border-bottom: 1px dashed var(--gray-100); gap: 12px; }
+.field-row:last-child { border-bottom: none; }
+.field-row .field-label { color: var(--muted); flex-shrink: 0; font-weight: 500; }
+.field-row .field-value { font-weight: 400; color: var(--gray-900); text-align: right; flex-grow: 1; word-break: break-word; overflow-wrap: break-word; }
+
+/* ── Unified Room Grid Component ── */
+.periods-stack { display: flex; flex-direction: column; gap: 16px; margin-left: 38px; }
+.period-title { font-size: 13px; font-weight: 500; color: var(--gray-700); }
+.period-row .pl { color: var(--muted); font-weight: 500; margin-right: 4px; }
+.period-row .pv { font-weight: 400; color: var(--gray-900); }
+
+.dorm-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-xs); transition: all 0.2s ease; }
+.dorm-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); transition: all 0.2s ease; }
+.dorm-title { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+.dorm-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); }
+
+.dorm-table-wrap { width: 100%; overflow-x: auto; }
+.dorm-table { width: 100%; min-width: 500px; border-collapse: collapse; font-size: 12px; }
+.dorm-table th { background: var(--gray-50); padding: 6px 4px; font-weight: 500; color: var(--gray-700); text-align: right; border-bottom: 1px solid var(--gray-200); border-right: 1px solid var(--gray-200); transition: all 0.2s ease; }
+.dorm-table th:last-child { border-right: none; }
+.dorm-table th.date-col { text-align: left; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 8px; font-size: 11px; white-space: nowrap; }
+.dorm-table th.sub-col { font-size: 10px; color: var(--muted); text-transform: uppercase; padding: 4px; letter-spacing: 0.5px; }
+.dorm-table td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--gray-100); border-right: 1px dashed var(--gray-200); color: var(--gray-900); font-weight: 400; transition: all 0.2s ease; }
+.dorm-table td:last-child { border-right: none; }
+.dorm-table td.date-col { text-align: left; font-weight: 500; padding-left: 8px; border-right: 1px solid var(--gray-200); white-space: nowrap; }
+.dorm-table tr:last-child td { border-bottom: none; }
+.dorm-table th.group-end, .dorm-table td.group-end { border-right: 1px solid var(--gray-200); }
+
+/* Edit Mode Overrides */
+.dorm-card.edit-mode { border-color: var(--primary); }
+.dorm-card.edit-mode .dorm-header { display: none; }
+
+/* Edit Mode Tools & Meta Switching */
+.grid-edit-controls { display: none; padding: 12px 16px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+.dorm-card.edit-mode .grid-edit-controls { display: block; }
+.edit-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 12px; }
+.edit-row:last-child { margin-bottom: 0; }
+.date-pickers { display: flex; align-items: center; gap: 12px; }
+.date-input { display: flex; align-items: center; gap: 8px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; padding: 4px 8px; font-size: 13px; color: var(--gray-900); }
+.date-input input { border: none; outline: none; background: transparent; width: 80px; color: inherit; font-family: inherit; font-weight: 500; }
+.room-checkboxes { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.room-cb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gray-700); cursor: pointer; user-select: none; }
+
+/* Inline Inputs */
+.cell-input { display: none; width: 100%; max-width: 48px; margin: 0 0 0 auto; padding: 2px 6px; border: 2px solid #dbeafe; font-size: 12px; text-align: right; font-family: inherit; color: var(--gray-900); background: #fff; transition: all 0.2s; border-radius: 12px; line-height: 1.2; outline: none; }
+.cell-input:hover { border-color: #bfdbfe; }
+.cell-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,113,227,0.15); }
+.dorm-card.edit-mode .cell-text { display: none; }
+.dorm-card.edit-mode .cell-input { display: inline-block; }
+
+.row-delete { visibility: hidden; color: var(--gray-400); font-size: 14px; cursor: pointer; padding-right: 8px; vertical-align: middle; transition: color 0.2s; }
+.row-delete:hover { color: #ff3b30; }
+.dorm-card.edit-mode .row-delete { visibility: visible; }
+
+.total-row td { background: var(--gray-50); font-weight: 500; border-top: 2px solid var(--gray-200); }
+.total-label { color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── Reason / SF Sync ── */
+.reason-select-wrapper { margin-left: 38px; margin-top: 8px; animation: fadeIn 0.3s ease; }
+.reason-select { width: 100%; max-width: 400px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; margin-bottom: 8px; background: #fff; box-shadow: var(--shadow-xs); }
+.reason-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,113,227,0.2); }
+.step-failure { margin-top: 16px; margin-left: 38px; padding: 16px; background: var(--destructive-soft); border-left: 3px solid #ff3b30; border-radius: 0 8px 8px 0; font-size: 13px; animation: fadeIn 0.3s ease; }
+.step-failure .failure-msg { color: var(--gray-900); margin-bottom: 12px; line-height: 1.5; }
+.failure-actions { display: flex; gap: 8px; }
+.right-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: var(--shadow-xs); flex: 1; }
+.dev-controls { margin-top: auto; padding-top: 20px; border-top: 1px dashed var(--gray-300); }
+.dev-controls h4 { font-size: 11px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; font-weight: 500; letter-spacing: 0.5px; }
+.check-target::before { content: '✓ '; color: var(--theme-color); font-weight: 500; display: inline-block; opacity: 0; width: 0; transition: all 0.3s ease; overflow: hidden; white-space: pre; }
+.section-complete .check-target::before { opacity: 1; width: 18px; }
+.section-failed .check-target::before { content: '✗ '; color: #ff3b30; opacity: 1; width: 18px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- GLOBAL HEADER -->
+  <div class="global-header">
+    <div class="gh-top">
+      <div class="gh-left">
+        <a href="#" class="back-btn">&larr;</a>
+        <div class="gh-title-group">
+          <div class="gh-title">Style & Glam Expo - Sept 2026</div>
+          <div class="gh-subtitle">2769 &middot; Received Jul 20, 2026, 8:36 PM <span class="badge">GMT+5:30</span></div>
+        </div>
+      </div>
+      <div class="gh-right">
+        <div class="property-select">
+          <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2L2 12h3v8h14v-8h3L12 2zm0 2.8l7 7h-2v6H7v-6H5l7-7z"/></svg>
+          The Muse New York <span>(40004)</span> &or;
+        </div>
+        <button class="icon-btn" style="font-size: 16px; line-height: 1;">&#x21bb;</button>
+        <div class="time-badge red">
+          <svg style="width:14px;height:14px;fill:currentColor;" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          1d total
+        </div>
+        <div class="status-badge">Rate Received</div>
+      </div>
+    </div>
+    
+
+    
+    <div class="gh-stepper">
+      <div class="step complete">
+        <div class="step-bar">
+          <span class="time">1m</span>
+          <span class="title">1 REQUEST DETAILS &check;</span>
+          <span class="path">RECV &rarr; DORM</span>
+        </div>
+      </div>
+      <div class="step complete">
+        <div class="step-bar">
+          <span class="time">21m</span>
+          <span class="title">2 RATE DETAILS &check;</span>
+          <span class="path">DORM &rarr; REPLY</span>
+        </div>
+      </div>
+      <div class="step complete">
+        <div class="step-bar">
+          <span class="time">1d 1h</span>
+          <span class="title">3 PROPOSAL CREATION &check;</span>
+          <span class="path">RATES &rarr; PROPOSAL</span>
+        </div>
+      </div>
+      <div class="step current">
+        <div class="step-bar">
+          <span class="time">&mdash;</span>
+          <span class="title">4 BOOKING CREATION</span>
+          <span class="path">PROPOSAL &rarr; BOOKING</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage-shell">
+    <!-- LEFT PANEL WRAPPER -->
+    <div class="left-panel-wrapper">
+    <!-- Scrolling Content -->
+    <div class="left-panel" id="left-panel">
+      <div class="unified-content">
+        <div class="summary-card">
+          <div class="sc-header">Please review and complete the booking in SF</div>
+          <div class="summary-grid">
+            <div><span class="label">Property</span><div class="value">Millennium Premier</div></div>
+            <div><span class="label">Request Type</span><div class="value">Combined</div></div>
+            <div><span class="label">Salesperson</span><div class="value">Raymond Moran</div></div>
+            <div><span class="label">DORM</span><div class="value">Nirav Amin</div></div>
+          </div>
+        </div>
+
+        <div id="form-container">
+          <div class="field-group" id="section-1">
+            <div class="field-group-header"><div class="num-icon" id="icon-1">1</div> Client & Account</div>
+            <div class="field-row"><span class="field-label check-target">1.1 Company</span><span class="field-value">Kathy Event Solutions</span></div>
+            <div class="field-row"><span class="field-label check-target">1.2 Contact</span><span class="field-value">Kathy Williams</span></div>
+            <div class="field-row"><span class="field-label check-target">1.3 Email</span><span class="field-value">kathy@events.com</span></div>
+            <div class="field-row"><span class="field-label check-target">1.4 Phone</span><span class="field-value">+1 (212) 555-0199</span></div>
+          </div>
+          <div class="field-group" id="section-2">
+            <div class="field-group-header"><div class="num-icon" id="icon-2">2</div> Delphi Classification</div>
+            <div class="field-row"><span class="field-label check-target">2.1 Booking Type</span><span class="field-value">Group</span></div>
+            <div class="field-row"><span class="field-label check-target">2.2 Meeting Class</span><span class="field-value">Convention</span></div>
+            <div class="field-row"><span class="field-label check-target">2.3 Revenue Type</span><span class="field-value">Catering</span></div>
+            <div class="field-row"><span class="field-label check-target">2.4 Lead Source</span><span class="field-value">Internet</span></div>
+          </div>
+
+          <div class="field-group" id="section-3">
+            <div class="field-group-header">
+              <div class="num-icon" id="icon-3">3</div> Booking Periods & Guestrooms
+            </div>
+            
+            <div class="periods-stack">
+              <!-- Period 1: UNIFIED ROOM GRID COMPONENT -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                  <div class="period-title check-target">3.1 Period 1 — Sep 15 – Sep 18</div>
+                  <div class="period-row"><span class="pl">Event Name:</span><span class="pv">Style & Glam Expo</span></div>
+                </div>
+                
+                <div class="dorm-card" id="period-1-grid">
+                  <div class="dorm-header">
+                    <!-- View Mode Toolbar -->
+                    <div class="dorm-meta grid-view-meta" style="width: 100%; justify-content: space-between;">
+                      <span>Sep 15 – Sep 18 · 3 nights</span>
+                      <button class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="toggleGridEdit('period-1-grid')">Edit</button>
+                    </div>
+                  </div>
+
+                  <!-- Edit Controls -->
+                  <div class="grid-edit-controls">
+                    <div class="edit-row" style="justify-content: space-between;">
+                      <div class="date-pickers">
+                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Arrival</span>
+                        <div class="date-input"><input type="text" value="9/15/2026"> 📅</div>
+                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Departure</span>
+                        <div class="date-input"><input type="text" value="9/18/2026"> 📅</div>
+                      </div>
+                      <div style="display:flex; gap: 8px;">
+                        <button class="btn btn-sm btn-ghost" onclick="toggleGridEdit('period-1-grid')" style="color: #8f6c00;">Cancel</button>
+                        <button class="btn btn-sm btn-black" onclick="toggleGridEdit('period-1-grid')">Save</button>
+                      </div>
+                    </div>
+                    <div class="edit-row" style="justify-content: flex-start; margin-bottom: 0;">
+                      <div class="room-checkboxes">
+                        <label class="room-cb"><input type="checkbox" checked> Premier King</label>
+                        <label class="room-cb"><input type="checkbox" checked> Premier Queen</label>
+                        <label class="room-cb"><input type="checkbox"> Standard King</label>
+                        <label class="room-cb"><input type="checkbox"> Run of House</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Table View/Edit -->
+                  <div class="dorm-table-wrap">
+                    <table class="dorm-table">
+                      <thead>
+                        <tr>
+                          <th class="date-col" rowspan="2" style="min-width: 140px;">Date</th>
+                          <th colspan="2" class="group-end">Premier King</th>
+                          <th colspan="2" class="group-end">Premier Queen</th>
+                          <th rowspan="2" style="min-width: 60px;">Total</th>
+                        </tr>
+                        <tr>
+                          <th class="sub-col">Count</th>
+                          <th class="sub-col group-end">Rate</th>
+                          <th class="sub-col">Count</th>
+                          <th class="sub-col group-end">Rate</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="date-col check-target"><span class="row-delete">&times;</span>Tue, Sep 15, 2026</td>
+                          <td class="check-target"><span class="cell-text">5</span><input type="text" class="cell-input" value="5"></td>
+                          <td class="group-end"><span class="cell-text">289</span><input type="text" class="cell-input" value="289"></td>
+                          <td class="check-target"><span class="cell-text">3</span><input type="text" class="cell-input" value="3"></td>
+                          <td class="group-end"><span class="cell-text">269</span><input type="text" class="cell-input" value="269"></td>
+                          <td style="font-weight: 500;">8</td>
+                        </tr>
+                        <tr>
+                          <td class="date-col check-target"><span class="row-delete">&times;</span>Wed, Sep 16, 2026</td>
+                          <td class="check-target"><span class="cell-text">5</span><input type="text" class="cell-input" value="5"></td>
+                          <td class="group-end"><span class="cell-text">289</span><input type="text" class="cell-input" value="289"></td>
+                          <td class="check-target"><span class="cell-text">3</span><input type="text" class="cell-input" value="3"></td>
+                          <td class="group-end"><span class="cell-text">269</span><input type="text" class="cell-input" value="269"></td>
+                          <td style="font-weight: 500;">8</td>
+                        </tr>
+                        <tr>
+                          <td class="date-col check-target"><span class="row-delete">&times;</span>Thu, Sep 17, 2026</td>
+                          <td class="check-target"><span class="cell-text">5</span><input type="text" class="cell-input" value="5"></td>
+                          <td class="group-end"><span class="cell-text">289</span><input type="text" class="cell-input" value="289"></td>
+                          <td class="check-target"><span class="cell-text">4</span><input type="text" class="cell-input" value="4"></td>
+                          <td class="group-end"><span class="cell-text">269</span><input type="text" class="cell-input" value="269"></td>
+                          <td style="font-weight: 500;">9</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr class="total-row">
+                          <td class="date-col total-label">Total Rooms</td>
+                          <td>15</td>
+                          <td class="group-end">-</td>
+                          <td>10</td>
+                          <td class="group-end">-</td>
+                          <td>25</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Period 2 (Legacy view only) -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                  <div class="period-title check-target">3.2 Period 2 — Sep 20 – Sep 22</div>
+                  <div class="period-row"><span class="pl">Event Name:</span><span class="pv">Style & Glam Expo — Ext</span></div>
+                </div>
+                
+                <div class="dorm-card" id="period-2-grid">
+                  <div class="dorm-header">
+                    <div class="dorm-meta grid-view-meta" style="width: 100%;">
+                      Sep 20 – Sep 22 · 2 nights
+                    </div>
+                  </div>
+                  <div class="dorm-table-wrap">
+                    <table class="dorm-table">
+                      <thead>
+                        <tr>
+                          <th class="date-col" rowspan="2" style="min-width: 140px;">Date</th>
+                          <th colspan="2" class="group-end">Premier King</th>
+                          <th colspan="2" class="group-end">Premier Queen</th>
+                          <th rowspan="2" style="min-width: 60px;">Total</th>
+                        </tr>
+                        <tr>
+                          <th class="sub-col">Count</th>
+                          <th class="sub-col group-end">Rate</th>
+                          <th class="sub-col">Count</th>
+                          <th class="sub-col group-end">Rate</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="date-col check-target">Sun, Sep 20, 2026</td>
+                          <td class="check-target">8</td><td class="group-end">289</td>
+                          <td class="check-target">5</td><td class="group-end">269</td>
+                          <td style="font-weight: 500;">13</td>
+                        </tr>
+                        <tr>
+                          <td class="date-col check-target">Mon, Sep 21, 2026</td>
+                          <td class="check-target">7</td><td class="group-end">289</td>
+                          <td class="check-target">5</td><td class="group-end">269</td>
+                          <td style="font-weight: 500;">12</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr class="total-row">
+                          <td class="date-col total-label">Total Rooms</td>
+                          <td>15</td>
+                          <td class="group-end">-</td>
+                          <td>10</td>
+                          <td class="group-end">-</td>
+                          <td>25</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group hidden" id="section-4">
+            <div class="field-group-header"><div class="num-icon" id="icon-4">4</div> Reason</div>
+            <div class="reason-select-wrapper">
+              <label style="font-size: 13px; font-weight: 500; color: var(--gray-700); display:block; margin-bottom: 8px;" id="reason-label" class="check-target">4.1 Reason</label>
+              <select class="reason-select" id="reason-sel">
+                <option value="">Select a reason...</option>
+                <option value="budget">Budget constraints</option>
+                <option value="dates">Dates unavailable</option>
+                <option value="lost_to_comp">Lost to competitor</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="field-group hidden" id="section-5">
+            <div class="field-group-header"><div class="num-icon" id="icon-5">5</div> Salesforce Sync</div>
+            <div style="margin-left: 38px; font-size: 13px; color: var(--muted); font-weight: 500;" id="sf-sync-text" class="check-target">Updating status in Salesforce...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mac-dock-wrapper">
+      <div class="mac-dock" id="dock-actions">
+        <div class="dock-status" id="dock-status-text">Awaiting booking</div>
+        <div class="dock-divider"></div>
+        <div class="dock-buttons" id="dock-buttons-container"></div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="dot"></div></div>
+  <div class="right-panel">
+    <div class="right-inner">
+      <div class="right-header"><div class="right-title">4.1 Booking Details</div></div>
+      <div class="right-card" id="right-content">
+        <div style="color:var(--muted); font-size:13px; margin-bottom: 16px;">This area normally shows the email thread and read-only inquiry details.</div>
+        <div style="padding: 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px;">
+          <span>Request:</span> Style & Glam Expo<br>
+          <span>Dates:</span> Sep 15 – Sep 18, 2026<br>
+          <span>Guestrooms:</span> 25 rooms peak<br>
+        </div>
+        <div class="dev-controls">
+          <h4>Prototype Settings (Dev)</h4>
+          <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;">
+            <input type="checkbox" id="sim-fail" /> Simulate API failure on Booking Periods step
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFlow = null; 
+let simFail = false;
+
+document.getElementById('sim-fail').addEventListener('change', (e) => { simFail = e.target.checked; });
+
+function toggleGridEdit(gridId) {
+  const grid = document.getElementById(gridId);
+  grid.classList.toggle('edit-mode');
+}
+
+function initDock() {
+  document.getElementById('dock-status-text').innerText = 'Awaiting booking';
+  document.getElementById('dock-status-text').style.color = 'var(--gray-700)';
+  document.getElementById('dock-buttons-container').innerHTML = `
+    <button class="btn btn-primary" onclick="startExecution('create')">Create Booking</button>
+    <button class="btn btn-warning" onclick="showReason('tdl')">Turn Down</button>
+    <button class="btn btn-destructive" onclick="showReason('lost')">Lost</button>
+  `;
+}
+
+function showReason(mode) {
+  currentFlow = mode;
+  document.body.className = '';
+  if (mode === 'tdl') document.body.classList.add('theme-tdl');
+  if (mode === 'lost') document.body.classList.add('theme-lost');
+  document.getElementById('section-4').classList.remove('hidden');
+  document.getElementById('reason-label').innerText = `4.1 Reason for ${mode === 'tdl' ? 'Turn Down' : 'Lost'}`;
+  const btnClass = mode === 'tdl' ? 'btn-warning' : 'btn-destructive';
+  const btnLabel = mode === 'tdl' ? 'Confirm Turn Down' : 'Confirm Lost';
+  document.getElementById('dock-status-text').innerText = 'Awaiting Confirmation';
+  document.getElementById('dock-buttons-container').innerHTML = `
+    <button class="btn btn-ghost" onclick="resetToIdle()">Cancel</button>
+    <button class="btn ${btnClass}" onclick="startExecution()">${btnLabel}</button>
+  `;
+  setTimeout(() => {
+    const lp = document.getElementById('left-panel');
+    lp.scrollTo({ top: lp.scrollHeight, behavior: 'smooth' });
+  }, 50);
+}
+
+function resetToIdle() {
+  currentFlow = null;
+  document.body.className = '';
+  document.getElementById('section-4').classList.add('hidden');
+  document.getElementById('section-5').classList.add('hidden');
+  for (let i = 1; i <= 5; i++) {
+    const icon = document.getElementById(`icon-${i}`);
+    if (icon) { icon.className = 'num-icon'; icon.innerHTML = i; }
+    const section = document.getElementById(`section-${i}`);
+    if (section) section.classList.remove('section-complete', 'section-failed');
+  }
+  const err = document.getElementById('error-msg');
+  if(err) err.remove();
+  document.getElementById('reason-sel').disabled = false;
+  initDock();
+}
+
+async function startExecution(modeOverride) {
+  if (modeOverride) {
+    currentFlow = modeOverride;
+    document.body.className = '';
+    if (modeOverride === 'tdl') document.body.classList.add('theme-tdl');
+    if (modeOverride === 'lost') document.body.classList.add('theme-lost');
+  }
+  if (currentFlow !== 'create') {
+    const sel = document.getElementById('reason-sel');
+    if (!sel.value) { alert("Please select a reason first."); return; }
+    sel.disabled = true;
+  }
+  const dockStatus = document.getElementById('dock-status-text');
+  if (currentFlow === 'create') dockStatus.innerText = 'Creating Booking...';
+  else if (currentFlow === 'tdl') dockStatus.innerText = 'Turning Down...';
+  else dockStatus.innerText = 'Marking as Lost...';
+  
+  dockStatus.style.color = 'var(--theme-color)';
+  document.getElementById('dock-buttons-container').innerHTML = ``;
+  
+  let steps = [1, 2, 3];
+  if (currentFlow !== 'create') {
+    steps.push(4); steps.push(5);
+    document.getElementById('section-5').classList.remove('hidden');
+    document.getElementById('sf-sync-text').innerText = `Marking as ${currentFlow === 'tdl' ? 'Turned Down' : 'Lost'} in Salesforce...`;
+  }
+  
+  let aborted = false;
+  for (let i = 0; i < steps.length; i++) {
+    const stepNum = steps[i];
+    const icon = document.getElementById(`icon-${stepNum}`);
+    const section = document.getElementById(`section-${stepNum}`);
+    
+    icon.className = 'num-icon running'; icon.innerHTML = ''; 
+    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    await new Promise(r => setTimeout(r, 1000 + Math.random() * 800));
+    
+    if (simFail && stepNum === 3) {
+      icon.className = 'num-icon failed'; icon.innerHTML = '✗';
+      section.classList.add('section-failed');
+      section.innerHTML += `
+        <div id="error-msg" class="step-failure">
+          <div class="failure-msg">Room type "Queen" could not be mapped for Millennium Premier. Update room blocks and try again.</div>
+          <div class="failure-actions">
+            <button class="btn btn-sm btn-ghost" onclick="alert('Navigates to room block editor')">Edit room blocks</button>
+            <button class="btn btn-sm btn-outline" onclick="resetToIdle()">Reset & Try again</button>
+          </div>
+        </div>
+      `;
+      aborted = true;
+      dockStatus.innerText = 'Failed';
+      dockStatus.style.color = '#ff3b30';
+      setTimeout(() => { document.getElementById('error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+      break;
+    }
+    icon.className = 'num-icon complete'; icon.innerHTML = '✓';
+    section.classList.add('section-complete');
+  }
+  
+  if (!aborted) {
+    dockStatus.innerText = currentFlow === 'create' ? 'Booking Created ✓' : (currentFlow === 'tdl' ? 'Turned Down ✓' : 'Lost ✓');
+    if (currentFlow === 'create') {
+      document.getElementById('dock-buttons-container').innerHTML = `
+        <button class="btn btn-warning" onclick="showReason('tdl')">Turn Down</button>
+        <button class="btn btn-destructive" onclick="showReason('lost')">Lost</button>
+        <button class="btn btn-outline" onclick="resetToIdle()">Start Over</button>
+      `;
+    } else {
+      document.getElementById('dock-buttons-container').innerHTML = `<button class="btn btn-outline" onclick="resetToIdle()">Start Over</button>`;
+    }
+    setTimeout(() => { document.getElementById('left-panel').scrollTo({ top: 0, behavior: 'smooth' }); }, 500);
+  } else {
+    document.getElementById('dock-buttons-container').innerHTML = `<button class="btn btn-outline" onclick="resetToIdle()">Start Over</button>`;
+  }
+}
+
+initDock();
+</script>
+</body>
+</html>
