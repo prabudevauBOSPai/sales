@@ -98,7 +98,7 @@ body {
 .right-panel { flex: 1; min-width: 0; overflow-y: auto; background: var(--gray-50); display: flex; flex-direction: column; }
 .right-inner { padding: 20px; flex: 1; display: flex; flex-direction: column; }
 .right-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; min-height: 36px; }
-.right-title { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
+.right-title { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0.3px; }
 
 /* ── Buttons ── */
 .btn {
@@ -132,7 +132,7 @@ body {
 .mac-dock .btn-ghost { box-shadow: none; }
 .floating-icon-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
 .floating-icon-btn:hover { background: var(--gray-50); color: var(--gray-900); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.dock-status { padding: 0 12px 0 16px; font-size: 13px; font-weight: 500; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease; }
+.dock-status { padding: 0 12px 0 16px; font-size: 13px; font-weight: 500; color: var(--gray-700); transition: color 0.3s ease; }
 .dock-divider { width: 1px; height: 24px; background: var(--gray-300); margin: 0 4px; }
 .dock-buttons { display: flex; gap: 8px; }
 .dock-buttons:empty { display: none; }
@@ -149,7 +149,14 @@ body {
 
 .field-group { margin-bottom: 16px; transition: opacity 0.3s ease; }
 .field-group.dimmed { opacity: 0.5; pointer-events: none; }
-.field-group-header { display: flex; align-items: center; gap: 12px; padding: 4px 0; font-size: 14px; font-weight: 500; color: var(--gray-800); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-200); margin-bottom: 8px; }
+.sections-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; margin-bottom: 16px; }
+.sections-pair .field-group { margin-bottom: 0; }
+@media (max-width: 720px) { .sections-pair { grid-template-columns: 1fr; } }
+.field-group-header { display: flex; align-items: center; gap: 12px; padding: 4px 0; font-size: 14px; font-weight: 500; color: var(--gray-800); border-bottom: 1px solid var(--gray-200); margin-bottom: 8px; }
+.field-row.field-error { background: #fef2f2; margin: -1px -9px 0 29px; padding: 4px 8px; border-radius: 6px; border: 1px solid #fecaca; }
+.field-row.field-warning { background: #fffbeb; margin: -1px -9px 0 29px; padding: 4px 8px; border-radius: 6px; border: 1px solid #fde68a; }
+.field-row.field-error .field-value { color: #b91c1c; }
+.field-row.field-warning .field-value { color: #a16207; }
 
 .num-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--gray-200); color: var(--gray-600); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; transition: all 0.3s ease; flex-shrink: 0; }
 .num-icon.running { background: transparent; border: 2px solid var(--primary); border-top-color: transparent; animation: spin 0.8s linear infinite; }
@@ -176,13 +183,18 @@ body {
 .dorm-table { width: 100%; min-width: 500px; border-collapse: collapse; font-size: 12px; }
 .dorm-table th { background: var(--gray-50); padding: 6px 4px; font-weight: 500; color: var(--gray-700); text-align: right; border-bottom: 1px solid var(--gray-200); border-right: 1px solid var(--gray-200); transition: all 0.2s ease; }
 .dorm-table th:last-child { border-right: none; }
-.dorm-table th.date-col { text-align: left; text-transform: uppercase; letter-spacing: 0.5px; padding-left: 8px; font-size: 11px; white-space: nowrap; }
-.dorm-table th.sub-col { font-size: 10px; color: var(--muted); text-transform: uppercase; padding: 4px; letter-spacing: 0.5px; }
-.dorm-table td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--gray-100); border-right: 1px dashed var(--gray-200); color: var(--gray-900); font-weight: 400; transition: all 0.2s ease; }
+.dorm-table th.date-col { text-align: left; padding-left: 12px; font-size: 11px; white-space: nowrap; position: sticky; left: 0; z-index: 3; background: var(--gray-50); }
+.dorm-table th.sub-col { font-size: 10px; color: var(--muted); padding: 4px; min-width: 60px; }
+.dorm-table th.col-disabled, .dorm-table td.col-disabled { color: var(--gray-400); background: #fafafa; }
+.dorm-table td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--gray-100); border-right: 1px dashed var(--gray-200); color: var(--gray-900); font-weight: 400; transition: all 0.2s ease; min-width: 60px; }
 .dorm-table td:last-child { border-right: none; }
-.dorm-table td.date-col { text-align: left; font-weight: 500; padding-left: 8px; border-right: 1px solid var(--gray-200); white-space: nowrap; }
+.dorm-table td.date-col { text-align: left; font-weight: 500; padding-left: 12px; border-right: 1px solid var(--gray-200); white-space: nowrap; position: sticky; left: 0; z-index: 2; background: #fff; }
 .dorm-table tr:last-child td { border-bottom: none; }
 .dorm-table th.group-end, .dorm-table td.group-end { border-right: 1px solid var(--gray-200); }
+.dorm-table th.total-col { position: sticky; right: 0; z-index: 3; background: var(--gray-50); border-left: 1px solid var(--gray-200); }
+.dorm-table td.total-col { position: sticky; right: 0; z-index: 2; background: #fff; border-left: 1px solid var(--gray-200); }
+.dorm-table .total-row td { position: sticky; bottom: 0; z-index: 3; background: #fff; border-top: 1px solid var(--gray-200); font-weight: 600; }
+.dorm-table .total-row td.date-col, .dorm-table .total-row td.total-col { z-index: 4; }
 
 /* Edit Mode Overrides */
 .dorm-card.edit-mode { border-color: var(--primary); }
@@ -196,8 +208,17 @@ body {
 .date-pickers { display: flex; align-items: center; gap: 12px; }
 .date-input { display: flex; align-items: center; gap: 8px; border: 1px solid var(--gray-300); background: #fff; border-radius: 6px; padding: 4px 8px; font-size: 13px; color: var(--gray-900); }
 .date-input input { border: none; outline: none; background: transparent; width: 80px; color: inherit; font-family: inherit; font-weight: 500; }
-.room-checkboxes { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.room-cb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gray-700); cursor: pointer; user-select: none; }
+.room-categories-block { width: 100%; }
+.room-checkboxes { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px 12px; }
+.room-cb { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--gray-600); cursor: default; user-select: none; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--gray-200); background: #fff; overflow: hidden; }
+.room-cb-on { color: var(--gray-800); border-color: #bfdbfe; background: #eff6ff; }
+.truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Toggle Switch Styles */
+.toggle-switch { width: 24px; height: 14px; background: var(--gray-300); border-radius: 12px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+.toggle-switch.toggle-on { background: var(--primary); }
+.toggle-switch.toggle-on::after { transform: translateX(10px); }
 
 /* Inline Inputs */
 .cell-input { display: none; width: 100%; max-width: 48px; margin: 0 0 0 auto; padding: 2px 6px; border: 2px solid #dbeafe; font-size: 12px; text-align: right; font-family: inherit; color: var(--gray-900); background: #fff; transition: all 0.2s; border-radius: 12px; line-height: 1.2; outline: none; }
@@ -206,12 +227,14 @@ body {
 .dorm-card.edit-mode .cell-text { display: none; }
 .dorm-card.edit-mode .cell-input { display: inline-block; }
 
-.row-delete { visibility: hidden; color: var(--gray-400); font-size: 14px; cursor: pointer; padding-right: 8px; vertical-align: middle; transition: color 0.2s; }
+.row-delete { visibility: hidden; color: var(--gray-400); font-size: 14px; cursor: pointer; position: absolute; left: 2px; padding: 0; top: 50%; transform: translateY(-50%); transition: color 0.2s; }
+.dorm-table td.date-col { position: sticky; /* ensures relative pos context for absolute children isn't necessary because sticky acts like relative */ }
 .row-delete:hover { color: #ff3b30; }
 .dorm-card.edit-mode .row-delete { visibility: visible; }
 
 .total-row td { background: var(--gray-50); font-weight: 500; border-top: 2px solid var(--gray-200); }
-.total-label { color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.total-label { color: var(--primary); font-size: 12px; font-weight: 500; }
+
 
 /* ── Reason / SF Sync ── */
 .reason-select-wrapper { margin-left: 38px; margin-top: 8px; animation: fadeIn 0.3s ease; }
@@ -248,7 +271,7 @@ body {
       <div class="gh-right">
         <div class="property-select">
           <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2L2 12h3v8h14v-8h3L12 2zm0 2.8l7 7h-2v6H7v-6H5l7-7z"/></svg>
-          The Muse New York <span>(40004)</span> &or;
+          Millennium Premier <span>(40004)</span> &or;
         </div>
         <button class="icon-btn" style="font-size: 16px; line-height: 1;">&#x21bb;</button>
         <div class="time-badge red">
@@ -265,29 +288,29 @@ body {
       <div class="step complete">
         <div class="step-bar">
           <span class="time">1m</span>
-          <span class="title">1 REQUEST DETAILS &check;</span>
-          <span class="path">RECV &rarr; DORM</span>
+          <span class="title">1 Request details ✓</span>
+          <span class="path">Recv → Dorm</span>
         </div>
       </div>
       <div class="step complete">
         <div class="step-bar">
           <span class="time">21m</span>
-          <span class="title">2 RATE DETAILS &check;</span>
-          <span class="path">DORM &rarr; REPLY</span>
+          <span class="title">2 Rate details ✓</span>
+          <span class="path">Dorm → Reply</span>
         </div>
       </div>
       <div class="step complete">
         <div class="step-bar">
           <span class="time">1d 1h</span>
-          <span class="title">3 PROPOSAL CREATION &check;</span>
-          <span class="path">RATES &rarr; PROPOSAL</span>
+          <span class="title">3 Proposal creation ✓</span>
+          <span class="path">Rates → Proposal</span>
         </div>
       </div>
       <div class="step current">
         <div class="step-bar">
           <span class="time">&mdash;</span>
-          <span class="title">4 BOOKING CREATION</span>
-          <span class="path">PROPOSAL &rarr; BOOKING</span>
+          <span class="title">4 Booking creation</span>
+          <span class="path">Proposal → Booking</span>
         </div>
       </div>
     </div>
@@ -310,19 +333,21 @@ body {
         </div>
 
         <div id="form-container">
+          <div class="sections-pair">
           <div class="field-group" id="section-1">
-            <div class="field-group-header"><div class="num-icon" id="icon-1">1</div> Client & Account</div>
+            <div class="field-group-header"><div class="num-icon" id="icon-1">1</div> Client & account</div>
             <div class="field-row"><span class="field-label check-target">1.1 Company</span><span class="field-value">Kathy Event Solutions</span></div>
             <div class="field-row"><span class="field-label check-target">1.2 Contact</span><span class="field-value">Kathy Williams</span></div>
-            <div class="field-row"><span class="field-label check-target">1.3 Email</span><span class="field-value">kathy@events.com</span></div>
+            <div class="field-row field-error"><span class="field-label check-target">1.3 Email</span><span class="field-value">kathy@</span></div>
             <div class="field-row"><span class="field-label check-target">1.4 Phone</span><span class="field-value">+1 (212) 555-0199</span></div>
           </div>
           <div class="field-group" id="section-2">
-            <div class="field-group-header"><div class="num-icon" id="icon-2">2</div> Delphi Classification</div>
-            <div class="field-row"><span class="field-label check-target">2.1 Booking Type</span><span class="field-value">Group</span></div>
-            <div class="field-row"><span class="field-label check-target">2.2 Meeting Class</span><span class="field-value">Convention</span></div>
-            <div class="field-row"><span class="field-label check-target">2.3 Revenue Type</span><span class="field-value">Catering</span></div>
-            <div class="field-row"><span class="field-label check-target">2.4 Lead Source</span><span class="field-value">Internet</span></div>
+            <div class="field-group-header"><div class="num-icon" id="icon-2">2</div> Booking details</div>
+            <div class="field-row"><span class="field-label check-target">2.1 Booking type</span><span class="field-value">Group</span></div>
+            <div class="field-row"><span class="field-label check-target">2.2 Meeting class</span><span class="field-value">Convention</span></div>
+            <div class="field-row"><span class="field-label check-target">2.3 Revenue type</span><span class="field-value">Catering</span></div>
+            <div class="field-row field-warning"><span class="field-label check-target">2.4 Lead source</span><span class="field-value">—</span></div>
+          </div>
           </div>
 
           <div class="field-group" id="section-3">
@@ -334,7 +359,7 @@ body {
               <!-- Period 1: UNIFIED ROOM GRID COMPONENT -->
               <div>
                 <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-                  <div class="period-title check-target">3.1 Period 1 — Sep 15 – Sep 18</div>
+                  <div class="period-title check-target">3.1 Period 1</div>
                   <div class="period-row"><span class="pl">Event Name:</span><span class="pv">Style & Glam Expo</span></div>
                 </div>
                 
@@ -362,127 +387,55 @@ body {
                       </div>
                     </div>
                     <div class="edit-row" style="justify-content: flex-start; margin-bottom: 0;">
-                      <div class="room-checkboxes">
-                        <label class="room-cb"><input type="checkbox" checked> Premier King</label>
-                        <label class="room-cb"><input type="checkbox" checked> Premier Queen</label>
-                        <label class="room-cb"><input type="checkbox"> Standard King</label>
-                        <label class="room-cb"><input type="checkbox"> Run of House</label>
-                      </div>
+                      <div id="period-1-categories" style="width: 100%;"></div>
                     </div>
                   </div>
 
                   <!-- Table View/Edit -->
                   <div class="dorm-table-wrap">
-                    <table class="dorm-table">
-                      <thead>
-                        <tr>
-                          <th class="date-col" rowspan="2" style="min-width: 140px;">Date</th>
-                          <th colspan="2" class="group-end">Premier King</th>
-                          <th colspan="2" class="group-end">Premier Queen</th>
-                          <th rowspan="2" style="min-width: 60px;">Total</th>
-                        </tr>
-                        <tr>
-                          <th class="sub-col">Count</th>
-                          <th class="sub-col group-end">Rate</th>
-                          <th class="sub-col">Count</th>
-                          <th class="sub-col group-end">Rate</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="date-col check-target"><span class="row-delete">&times;</span>Tue, Sep 15, 2026</td>
-                          <td class="check-target"><span class="cell-text">5</span><input type="text" class="cell-input" value="5"></td>
-                          <td class="group-end"><span class="cell-text">289</span><input type="text" class="cell-input" value="289"></td>
-                          <td class="check-target"><span class="cell-text">3</span><input type="text" class="cell-input" value="3"></td>
-                          <td class="group-end"><span class="cell-text">269</span><input type="text" class="cell-input" value="269"></td>
-                          <td style="font-weight: 500;">8</td>
-                        </tr>
-                        <tr>
-                          <td class="date-col check-target"><span class="row-delete">&times;</span>Wed, Sep 16, 2026</td>
-                          <td class="check-target"><span class="cell-text">5</span><input type="text" class="cell-input" value="5"></td>
-                          <td class="group-end"><span class="cell-text">289</span><input type="text" class="cell-input" value="289"></td>
-                          <td class="check-target"><span class="cell-text">3</span><input type="text" class="cell-input" value="3"></td>
-                          <td class="group-end"><span class="cell-text">269</span><input type="text" class="cell-input" value="269"></td>
-                          <td style="font-weight: 500;">8</td>
-                        </tr>
-                        <tr>
-                          <td class="date-col check-target"><span class="row-delete">&times;</span>Thu, Sep 17, 2026</td>
-                          <td class="check-target"><span class="cell-text">5</span><input type="text" class="cell-input" value="5"></td>
-                          <td class="group-end"><span class="cell-text">289</span><input type="text" class="cell-input" value="289"></td>
-                          <td class="check-target"><span class="cell-text">4</span><input type="text" class="cell-input" value="4"></td>
-                          <td class="group-end"><span class="cell-text">269</span><input type="text" class="cell-input" value="269"></td>
-                          <td style="font-weight: 500;">9</td>
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                        <tr class="total-row">
-                          <td class="date-col total-label">Total Rooms</td>
-                          <td>15</td>
-                          <td class="group-end">-</td>
-                          <td>10</td>
-                          <td class="group-end">-</td>
-                          <td>25</td>
-                        </tr>
-                      </tfoot>
-                    </table>
+                    <table class="dorm-table" id="period-1-table"></table>
                   </div>
                 </div>
               </div>
 
-              <!-- Period 2 (Legacy view only) -->
+              <!-- Period 2 (view only) -->
               <div>
                 <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-                  <div class="period-title check-target">3.2 Period 2 — Sep 20 – Sep 22</div>
-                  <div class="period-row"><span class="pl">Event Name:</span><span class="pv">Style & Glam Expo — Ext</span></div>
+                  <div class="period-title check-target">3.2 Period 2</div>
+                  <div class="period-row"><span class="pl">Event name:</span><span class="pv">Style & Glam Expo — Ext</span></div>
                 </div>
                 
                 <div class="dorm-card" id="period-2-grid">
                   <div class="dorm-header">
-                    <div class="dorm-meta grid-view-meta" style="width: 100%;">
-                      Sep 20 – Sep 22 · 2 nights
+                    <!-- View Mode Toolbar -->
+                    <div class="dorm-meta grid-view-meta" style="width: 100%; justify-content: space-between;">
+                      <span>Sep 20 – Sep 22 · 2 nights</span>
+                      <button class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="toggleGridEdit('period-2-grid')">Edit</button>
                     </div>
                   </div>
+
+                  <!-- Edit Controls -->
+                  <div class="grid-edit-controls">
+                    <div class="edit-row" style="justify-content: space-between;">
+                      <div class="date-pickers">
+                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Arrival</span>
+                        <div class="date-input"><input type="text" value="9/20/2026"> 📅</div>
+                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Departure</span>
+                        <div class="date-input"><input type="text" value="9/22/2026"> 📅</div>
+                      </div>
+                      <div style="display:flex; gap: 8px;">
+                        <button class="btn btn-sm btn-ghost" onclick="toggleGridEdit('period-2-grid')" style="color: #8f6c00;">Cancel</button>
+                        <button class="btn btn-sm btn-black" onclick="toggleGridEdit('period-2-grid')">Save</button>
+                      </div>
+                    </div>
+                    <div class="edit-row" style="justify-content: flex-start; margin-bottom: 0;">
+                      <div id="period-2-categories" style="width: 100%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Table View/Edit -->
                   <div class="dorm-table-wrap">
-                    <table class="dorm-table">
-                      <thead>
-                        <tr>
-                          <th class="date-col" rowspan="2" style="min-width: 140px;">Date</th>
-                          <th colspan="2" class="group-end">Premier King</th>
-                          <th colspan="2" class="group-end">Premier Queen</th>
-                          <th rowspan="2" style="min-width: 60px;">Total</th>
-                        </tr>
-                        <tr>
-                          <th class="sub-col">Count</th>
-                          <th class="sub-col group-end">Rate</th>
-                          <th class="sub-col">Count</th>
-                          <th class="sub-col group-end">Rate</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td class="date-col check-target">Sun, Sep 20, 2026</td>
-                          <td class="check-target">8</td><td class="group-end">289</td>
-                          <td class="check-target">5</td><td class="group-end">269</td>
-                          <td style="font-weight: 500;">13</td>
-                        </tr>
-                        <tr>
-                          <td class="date-col check-target">Mon, Sep 21, 2026</td>
-                          <td class="check-target">7</td><td class="group-end">289</td>
-                          <td class="check-target">5</td><td class="group-end">269</td>
-                          <td style="font-weight: 500;">12</td>
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                        <tr class="total-row">
-                          <td class="date-col total-label">Total Rooms</td>
-                          <td>15</td>
-                          <td class="group-end">-</td>
-                          <td>10</td>
-                          <td class="group-end">-</td>
-                          <td>25</td>
-                        </tr>
-                      </tfoot>
-                    </table>
+                    <table class="dorm-table" id="period-2-table"></table>
                   </div>
                 </div>
               </div>
@@ -521,7 +474,7 @@ body {
   <div class="divider"><div class="dot"></div></div>
   <div class="right-panel">
     <div class="right-inner">
-      <div class="right-header"><div class="right-title">4.1 Booking Details</div></div>
+      <div class="right-header"><div class="right-title">4.1 Booking details</div></div>
       <div class="right-card" id="right-content">
         <div style="color:var(--muted); font-size:13px; margin-bottom: 16px;">This area normally shows the email thread and read-only inquiry details.</div>
         <div style="padding: 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px;">
@@ -539,7 +492,9 @@ body {
     </div>
   </div>
 </div>
+</div>
 
+<script src="room-categories.js"></script>
 <script>
 let currentFlow = null; 
 let simFail = false;
