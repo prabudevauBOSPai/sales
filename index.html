@@ -44,7 +44,7 @@ body.theme-lost { --theme-color: var(--lost-color); }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 14px; color: var(--fg); background: var(--bg); line-height: 1.5;
+  font-size: 13px; color: var(--fg); background: var(--bg); line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -69,14 +69,14 @@ body {
 
 
 
-.gh-stepper { display: flex; gap: 2px; padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--border); }
+.gh-stepper { display: flex; gap: 2px; padding: 8px 24px; background: #fff; border-bottom: 1px solid var(--border); }
 .step { flex: 1; display: flex; }
-.step-bar { height: 32px; width: 100%; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; position: relative; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%); padding: 0 16px; text-transform: uppercase; white-space: nowrap; }
+.step-bar { height: 28px; width: 100%; display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 500; letter-spacing: 0.5px; position: relative; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%); padding: 0 16px; white-space: nowrap; }
 .step:first-child .step-bar { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 0 50%); border-radius: 4px 0 0 4px; padding-left: 12px; }
 .step:last-child .step-bar { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); border-radius: 0 4px 4px 0; padding-right: 24px; }
 
 .step-bar .time { font-weight: 600; opacity: 0.9; flex-shrink: 0; }
-.step-bar .path { font-size: 9px; opacity: 0.7; overflow: hidden; text-overflow: clip; min-width: 0; }
+.step-bar .path { font-size: 7px; opacity: 0.7; overflow: hidden; text-overflow: clip; min-width: 0; margin-left: 8px; }
 .step-bar .title { font-weight: 600; flex-shrink: 0; }
 
 .step.complete .step-bar { background: #dcfce7; color: #166534; }
@@ -103,7 +103,7 @@ body {
 /* ── Buttons ── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px;
-  border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;
+  border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer;
   border: 1px solid var(--border); background: #fff; color: var(--fg);
   transition: all .15s; text-decoration: none;
 }
@@ -119,7 +119,7 @@ body {
 .btn-destructive { background: var(--lost-color); color: #fff; border-color: var(--lost-color); }
 .btn-destructive:hover { background: #ea580c; }
 
-.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
 .btn-ghost { border: none; background: transparent; color: var(--primary); padding: 4px 12px; }
 .btn-ghost:hover { background: #e8f4fd; }
 .btn-black { background: #1a1a1c; border-color: #1a1a1c; color: #fff; }
@@ -128,11 +128,11 @@ body {
 /* ── Mac Dock Floating Action Bar ── */
 .mac-dock-wrapper { position: absolute; bottom: 32px; left: 0; width: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; z-index: 100; animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .mac-dock { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); padding: 8px; border-radius: 99px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid rgba(255, 255, 255, 0.7); display: flex; gap: 8px; align-items: center; pointer-events: auto; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-.mac-dock .btn { border-radius: 99px; padding: 10px 24px; font-size: 14px; box-shadow: var(--shadow-xs); }
+.mac-dock .btn { border-radius: 99px; padding: 10px 24px; font-size: 13px; box-shadow: var(--shadow-xs); }
 .mac-dock .btn-ghost { box-shadow: none; }
 .floating-icon-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; color: var(--gray-600); transition: all 0.2s; }
 .floating-icon-btn:hover { background: var(--gray-50); color: var(--gray-900); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.dock-status { padding: 0 12px 0 16px; font-size: 13px; font-weight: 500; color: var(--gray-700); transition: color 0.3s ease; }
+.dock-status { padding: 0 12px 0 16px; font-size: 12px; font-weight: 500; color: var(--gray-700); transition: color 0.3s ease; }
 .dock-divider { width: 1px; height: 24px; background: var(--gray-300); margin: 0 4px; }
 .dock-buttons { display: flex; gap: 8px; }
 .dock-buttons:empty { display: none; }
@@ -142,9 +142,9 @@ body {
 /* ── Unified Layout ── */
 .unified-content { padding: 16px 20px 140px; animation: fadeIn 0.3s ease; max-width: 800px; margin: 0 auto; position: relative; }
 .summary-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow-sm); margin-bottom: 16px; }
-.sc-header { text-align: center; font-size: 14px; font-weight: 400; color: var(--gray-800); margin-bottom: 12px; }
-.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px 12px; font-size: 13px; }
-.summary-grid .label { color: var(--muted); font-size: 12px; margin-bottom: 2px; display: block; }
+.sc-header { text-align: center; font-size: 13px; font-weight: 400; color: var(--gray-800); margin-bottom: 12px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px 12px; font-size: 12px; }
+.summary-grid .label { color: var(--muted); font-size: 11px; margin-bottom: 2px; display: block; }
 .summary-grid .value { font-weight: 500; color: var(--gray-900); }
 
 .field-group { margin-bottom: 16px; transition: opacity 0.3s ease; }
@@ -152,39 +152,39 @@ body {
 .sections-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; margin-bottom: 16px; }
 .sections-pair .field-group { margin-bottom: 0; }
 @media (max-width: 720px) { .sections-pair { grid-template-columns: 1fr; } }
-.field-group-header { display: flex; align-items: center; gap: 12px; padding: 4px 0; font-size: 14px; font-weight: 500; color: var(--gray-800); border-bottom: 1px solid var(--gray-200); margin-bottom: 8px; }
+.field-group-header { display: flex; align-items: center; gap: 12px; padding: 4px 0; font-size: 13px; font-weight: 500; color: var(--gray-800); border-bottom: 1px solid var(--gray-200); margin-bottom: 8px; }
 .field-row.field-error { background: #fef2f2; margin: -1px -9px 0 29px; padding: 4px 8px; border-radius: 6px; border: 1px solid #fecaca; }
 .field-row.field-warning { background: #fffbeb; margin: -1px -9px 0 29px; padding: 4px 8px; border-radius: 6px; border: 1px solid #fde68a; }
 .field-row.field-error .field-value { color: #b91c1c; }
 .field-row.field-warning .field-value { color: #a16207; }
 
-.num-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--gray-200); color: var(--gray-600); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; transition: all 0.3s ease; flex-shrink: 0; }
+.num-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--gray-200); color: var(--gray-600); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; transition: all 0.3s ease; flex-shrink: 0; }
 .num-icon.running { background: transparent; border: 2px solid var(--primary); border-top-color: transparent; animation: spin 0.8s linear infinite; }
 .num-icon.complete { background: var(--theme-color); color: #fff; transform: scale(1.1); border: none; }
 .num-icon.failed { background: #ff3b30; color: #fff; transform: scale(1.1); border: none; }
 
-.field-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 0 4px 38px; font-size: 13px; border-bottom: 1px dashed var(--gray-100); gap: 12px; }
+.field-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 4px 0 4px 38px; font-size: 12px; border-bottom: 1px dashed var(--gray-100); gap: 12px; }
 .field-row:last-child { border-bottom: none; }
 .field-row .field-label { color: var(--muted); flex-shrink: 0; font-weight: 500; }
 .field-row .field-value { font-weight: 400; color: var(--gray-900); text-align: right; flex-grow: 1; word-break: break-word; overflow-wrap: break-word; }
 
 /* ── Unified Room Grid Component ── */
 .periods-stack { display: flex; flex-direction: column; gap: 16px; margin-left: 38px; }
-.period-title { font-size: 13px; font-weight: 500; color: var(--gray-700); }
+.period-title { font-size: 12px; font-weight: 500; color: var(--gray-700); }
 .period-row .pl { color: var(--muted); font-weight: 500; margin-right: 4px; }
 .period-row .pv { font-weight: 400; color: var(--gray-900); }
 
 .dorm-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-xs); transition: all 0.2s ease; }
 .dorm-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); transition: all 0.2s ease; }
-.dorm-title { font-size: 13px; font-weight: 500; color: var(--gray-800); }
-.dorm-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); }
+.dorm-title { font-size: 12px; font-weight: 500; color: var(--gray-800); }
+.dorm-meta { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--muted); }
 
 .dorm-table-wrap { width: 100%; overflow-x: auto; }
-.dorm-table { width: 100%; min-width: 500px; border-collapse: collapse; font-size: 12px; }
+.dorm-table { width: 100%; min-width: 500px; border-collapse: collapse; font-size: 11px; }
 .dorm-table th { background: var(--gray-50); padding: 6px 4px; font-weight: 500; color: var(--gray-700); text-align: right; border-bottom: 1px solid var(--gray-200); border-right: 1px solid var(--gray-200); transition: all 0.2s ease; }
 .dorm-table th:last-child { border-right: none; }
-.dorm-table th.date-col { text-align: left; padding-left: 12px; font-size: 11px; white-space: nowrap; position: sticky; left: 0; z-index: 3; background: var(--gray-50); }
-.dorm-table th.sub-col { font-size: 10px; color: var(--muted); padding: 4px; min-width: 60px; }
+.dorm-table th.date-col { text-align: left; padding-left: 12px; font-size: 10px; white-space: nowrap; position: sticky; left: 0; z-index: 3; background: var(--gray-50); }
+.dorm-table th.sub-col { font-size: 9px; color: var(--muted); padding: 4px; min-width: 60px; }
 .dorm-table th.col-disabled, .dorm-table td.col-disabled { color: var(--gray-400); background: #fafafa; }
 .dorm-table td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--gray-100); border-right: 1px dashed var(--gray-200); color: var(--gray-900); font-weight: 400; transition: all 0.2s ease; min-width: 60px; }
 .dorm-table td:last-child { border-right: none; }
@@ -233,14 +233,14 @@ body {
 .dorm-card.edit-mode .row-delete { visibility: visible; }
 
 .total-row td { background: var(--gray-50); font-weight: 500; border-top: 2px solid var(--gray-200); }
-.total-label { color: var(--primary); font-size: 12px; font-weight: 500; }
+.total-label { color: var(--primary); font-size: 11px; font-weight: 500; }
 
 
 /* ── Reason / SF Sync ── */
 .reason-select-wrapper { margin-left: 38px; margin-top: 8px; animation: fadeIn 0.3s ease; }
-.reason-select { width: 100%; max-width: 400px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; margin-bottom: 8px; background: #fff; box-shadow: var(--shadow-xs); }
+.reason-select { width: 100%; max-width: 400px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; font-family: inherit; margin-bottom: 8px; background: #fff; box-shadow: var(--shadow-xs); }
 .reason-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,113,227,0.2); }
-.step-failure { margin-top: 16px; margin-left: 38px; padding: 16px; background: var(--destructive-soft); border-left: 3px solid #ff3b30; border-radius: 0 8px 8px 0; font-size: 13px; animation: fadeIn 0.3s ease; }
+.step-failure { margin-top: 16px; margin-left: 38px; padding: 16px; background: var(--destructive-soft); border-left: 3px solid #ff3b30; border-radius: 0 8px 8px 0; font-size: 12px; animation: fadeIn 0.3s ease; }
 .step-failure .failure-msg { color: var(--gray-900); margin-bottom: 12px; line-height: 1.5; }
 .failure-actions { display: flex; gap: 8px; }
 .right-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: var(--shadow-xs); flex: 1; }
@@ -287,37 +287,29 @@ body {
     <div class="gh-stepper">
       <div class="step complete">
         <div class="step-bar">
-          <div style="display: flex; gap: 8px; align-items: baseline;">
-            <span class="title">1. Request details ✓</span>
-            <span class="time">1m</span>
-          </div>
+          <span class="title">1. Request details ✓</span>
+          <span class="time">1m</span>
           <span class="path">Recv → Dorm</span>
         </div>
       </div>
       <div class="step complete">
         <div class="step-bar">
-          <div style="display: flex; gap: 8px; align-items: baseline;">
-            <span class="title">2. Rate details ✓</span>
-            <span class="time">21m</span>
-          </div>
+          <span class="title">2. Rate details ✓</span>
+          <span class="time">21m</span>
           <span class="path">Dorm → Reply</span>
         </div>
       </div>
       <div class="step complete">
         <div class="step-bar">
-          <div style="display: flex; gap: 8px; align-items: baseline;">
-            <span class="title">3. Proposal creation ✓</span>
-            <span class="time">1d 1h</span>
-          </div>
+          <span class="title">3. Proposal creation ✓</span>
+          <span class="time">1d 1h</span>
           <span class="path">Rates → Proposal</span>
         </div>
       </div>
       <div class="step current">
         <div class="step-bar">
-          <div style="display: flex; gap: 8px; align-items: baseline;">
-            <span class="title">4. Booking creation</span>
-            <span class="time">&mdash;</span>
-          </div>
+          <span class="title">4. Booking creation</span>
+          <span class="time">&mdash;</span>
           <span class="path">Proposal → Booking</span>
         </div>
       </div>
@@ -376,7 +368,7 @@ body {
                     <!-- View Mode Toolbar -->
                     <div class="dorm-meta grid-view-meta" style="width: 100%; justify-content: space-between;">
                       <span>Sep 15 – Sep 18 · 3 nights</span>
-                      <button class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="toggleGridEdit('period-1-grid')">Edit</button>
+                      <button class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 10px;" onclick="toggleGridEdit('period-1-grid')">Edit</button>
                     </div>
                   </div>
 
@@ -384,9 +376,9 @@ body {
                   <div class="grid-edit-controls">
                     <div class="edit-row" style="justify-content: space-between;">
                       <div class="date-pickers">
-                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Arrival</span>
+                        <span style="font-size:11px; color:#b78a00; font-weight: 500;">Arrival</span>
                         <div class="date-input"><input type="text" value="9/15/2026"> 📅</div>
-                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Departure</span>
+                        <span style="font-size:11px; color:#b78a00; font-weight: 500;">Departure</span>
                         <div class="date-input"><input type="text" value="9/18/2026"> 📅</div>
                       </div>
                       <div style="display:flex; gap: 8px;">
@@ -418,7 +410,7 @@ body {
                     <!-- View Mode Toolbar -->
                     <div class="dorm-meta grid-view-meta" style="width: 100%; justify-content: space-between;">
                       <span>Sep 20 – Sep 22 · 2 nights</span>
-                      <button class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="toggleGridEdit('period-2-grid')">Edit</button>
+                      <button class="btn btn-sm btn-outline" style="padding: 4px 10px; font-size: 10px;" onclick="toggleGridEdit('period-2-grid')">Edit</button>
                     </div>
                   </div>
 
@@ -426,9 +418,9 @@ body {
                   <div class="grid-edit-controls">
                     <div class="edit-row" style="justify-content: space-between;">
                       <div class="date-pickers">
-                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Arrival</span>
+                        <span style="font-size:11px; color:#b78a00; font-weight: 500;">Arrival</span>
                         <div class="date-input"><input type="text" value="9/20/2026"> 📅</div>
-                        <span style="font-size:12px; color:#b78a00; font-weight: 500;">Departure</span>
+                        <span style="font-size:11px; color:#b78a00; font-weight: 500;">Departure</span>
                         <div class="date-input"><input type="text" value="9/22/2026"> 📅</div>
                       </div>
                       <div style="display:flex; gap: 8px;">
@@ -453,7 +445,7 @@ body {
           <div class="field-group hidden" id="section-4">
             <div class="field-group-header"><div class="num-icon" id="icon-4">4</div> Reason</div>
             <div class="reason-select-wrapper">
-              <label style="font-size: 13px; font-weight: 500; color: var(--gray-700); display:block; margin-bottom: 8px;" id="reason-label" class="check-target">4.1 Reason</label>
+              <label style="font-size: 12px; font-weight: 500; color: var(--gray-700); display:block; margin-bottom: 8px;" id="reason-label" class="check-target">4.1 Reason</label>
               <select class="reason-select" id="reason-sel">
                 <option value="">Select a reason...</option>
                 <option value="budget">Budget constraints</option>
@@ -465,7 +457,7 @@ body {
           
           <div class="field-group hidden" id="section-5">
             <div class="field-group-header"><div class="num-icon" id="icon-5">5</div> Salesforce Sync</div>
-            <div style="margin-left: 38px; font-size: 13px; color: var(--muted); font-weight: 500;" id="sf-sync-text" class="check-target">Updating status in Salesforce...</div>
+            <div style="margin-left: 38px; font-size: 12px; color: var(--muted); font-weight: 500;" id="sf-sync-text" class="check-target">Updating status in Salesforce...</div>
           </div>
         </div>
       </div>
@@ -484,15 +476,15 @@ body {
     <div class="right-inner">
       <div class="right-header"><div class="right-title">4.1 Booking details</div></div>
       <div class="right-card" id="right-content">
-        <div style="color:var(--muted); font-size:13px; margin-bottom: 16px;">This area normally shows the email thread and read-only inquiry details.</div>
-        <div style="padding: 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px;">
+        <div style="color:var(--muted); font-size:12px; margin-bottom: 16px;">This area normally shows the email thread and read-only inquiry details.</div>
+        <div style="padding: 16px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; font-size: 12px;">
           <span>Request:</span> Style & Glam Expo<br>
           <span>Dates:</span> Sep 15 – Sep 18, 2026<br>
           <span>Guestrooms:</span> 25 rooms peak<br>
         </div>
         <div class="dev-controls">
           <h4>Prototype Settings (Dev)</h4>
-          <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:11px; cursor:pointer;">
             <input type="checkbox" id="sim-fail" /> Simulate API failure on Booking Periods step
           </label>
         </div>
