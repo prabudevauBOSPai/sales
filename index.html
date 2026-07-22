@@ -71,13 +71,13 @@ body {
 
 .gh-stepper { display: flex; gap: 2px; padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--border); }
 .step { flex: 1; display: flex; }
-.step-bar { height: 32px; width: 100%; display: flex; align-items: center; justify-content: space-around; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; position: relative; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%); padding: 0 16px; }
-.step:first-child .step-bar { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 0 50%); border-radius: 4px 0 0 4px; padding-left: 24px; }
+.step-bar { height: 32px; width: 100%; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; position: relative; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%); padding: 0 16px; text-transform: uppercase; white-space: nowrap; }
+.step:first-child .step-bar { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 0 50%); border-radius: 4px 0 0 4px; padding-left: 12px; }
 .step:last-child .step-bar { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); border-radius: 0 4px 4px 0; padding-right: 24px; }
 
-.step-bar .time { font-weight: 600; opacity: 0.9; }
-.step-bar .path { font-size: 9px; opacity: 0.7; }
-.step-bar .title { font-weight: 600; }
+.step-bar .time { font-weight: 600; opacity: 0.9; flex-shrink: 0; }
+.step-bar .path { font-size: 9px; opacity: 0.7; overflow: hidden; text-overflow: clip; min-width: 0; }
+.step-bar .title { font-weight: 600; flex-shrink: 0; }
 
 .step.complete .step-bar { background: #dcfce7; color: #166534; }
 .step.current { flex: 1.5; }
@@ -287,29 +287,37 @@ body {
     <div class="gh-stepper">
       <div class="step complete">
         <div class="step-bar">
-          <span class="time">1m</span>
-          <span class="title">1 Request details ✓</span>
+          <div style="display: flex; gap: 8px; align-items: baseline;">
+            <span class="title">1. Request details ✓</span>
+            <span class="time">1m</span>
+          </div>
           <span class="path">Recv → Dorm</span>
         </div>
       </div>
       <div class="step complete">
         <div class="step-bar">
-          <span class="time">21m</span>
-          <span class="title">2 Rate details ✓</span>
+          <div style="display: flex; gap: 8px; align-items: baseline;">
+            <span class="title">2. Rate details ✓</span>
+            <span class="time">21m</span>
+          </div>
           <span class="path">Dorm → Reply</span>
         </div>
       </div>
       <div class="step complete">
         <div class="step-bar">
-          <span class="time">1d 1h</span>
-          <span class="title">3 Proposal creation ✓</span>
+          <div style="display: flex; gap: 8px; align-items: baseline;">
+            <span class="title">3. Proposal creation ✓</span>
+            <span class="time">1d 1h</span>
+          </div>
           <span class="path">Rates → Proposal</span>
         </div>
       </div>
       <div class="step current">
         <div class="step-bar">
-          <span class="time">&mdash;</span>
-          <span class="title">4 Booking creation</span>
+          <div style="display: flex; gap: 8px; align-items: baseline;">
+            <span class="title">4. Booking creation</span>
+            <span class="time">&mdash;</span>
+          </div>
           <span class="path">Proposal → Booking</span>
         </div>
       </div>
@@ -494,7 +502,158 @@ body {
 </div>
 </div>
 
-<script src="room-categories.js"></script>
+<script>
+/** PM #2905 — Offered room categories (Settings master list, same as Property Onboarding) */
+const OFFERED_ROOM_CATEGORIES = [
+  { name: '1 King Bed', enabled: true },
+  { name: '2 Queen Beds', enabled: true },
+  { name: '2 Double Beds', enabled: false },
+  { name: '1 Queen Bed', enabled: false },
+  { name: '1 Double Bed', enabled: false },
+  { name: 'Suite 1 Bed', enabled: false },
+  { name: 'Suite 2 Beds', enabled: false },
+  { name: 'Junior Suite', enabled: false },
+  { name: 'Penthouse', enabled: true },
+  { name: '1 Bedroom', enabled: true },
+  { name: '2 Bedroom', enabled: false },
+  { name: '3+ Bedrooms', enabled: false },
+  { name: 'Studio', enabled: true },
+];
+
+const SAMPLE_CELL_DATA = {
+  '1 King Bed': { counts: [5, 5, 5], rates: [289, 289, 289] },
+  '2 Queen Beds': { counts: [3, 3, 4], rates: [269, 269, 269] },
+  Penthouse: { counts: [1, 1, 0], rates: [599, 599, 599] },
+  '1 Bedroom': { counts: [2, 2, 2], rates: [349, 349, 349] },
+  Studio: { counts: [1, 1, 1], rates: [199, 199, 199] },
+};
+
+const PERIOD_1_DATES = ['Tue, Sep 15, 2026', 'Wed, Sep 16, 2026', 'Thu, Sep 17, 2026'];
+const PERIOD_2_DATES = ['Sun, Sep 20, 2026', 'Mon, Sep 21, 2026'];
+
+function enabledCategoryCount() {
+  return OFFERED_ROOM_CATEGORIES.filter((c) => c.enabled).length;
+}
+
+function renderCategoryCheckboxes(container) {
+  if (!container) return;
+  container.innerHTML = `
+    <div class="room-categories-block" style="margin-bottom: 12px;">
+      <div class="room-checkboxes">
+        ${OFFERED_ROOM_CATEGORIES.map(
+          (cat) => `
+          <div class="room-cb${cat.enabled ? ' room-cb-on' : ''}" onclick="toggleCategory('${cat.name}')" style="cursor: pointer;">
+            <div class="toggle-switch${cat.enabled ? ' toggle-on' : ''}"></div>
+            <span class="truncate">${cat.name}</span>
+          </div>`
+        ).join('')}
+      </div>
+    </div>`;
+}
+
+window.toggleCategory = function(name) {
+  const cat = OFFERED_ROOM_CATEGORIES.find(c => c.name === name);
+  if (cat) {
+    cat.enabled = !cat.enabled;
+    initRoomGrids();
+  }
+};
+
+function cellValue(cat, rowIndex, field) {
+  const sample = SAMPLE_CELL_DATA[cat.name];
+  if (!sample || !cat.enabled) return '—';
+  const val = sample[field][rowIndex];
+  if (val === 0 || val === undefined || val === null) return '—';
+  return String(val);
+}
+
+function sumCountsForRow(rowIndex) {
+  return OFFERED_ROOM_CATEGORIES.reduce((sum, cat) => {
+    const sample = SAMPLE_CELL_DATA[cat.name];
+    if (!sample || !cat.enabled) return sum;
+    return sum + (sample.counts[rowIndex] || 0);
+  }, 0);
+}
+
+function sumCountsForCategory(cat) {
+  const sample = SAMPLE_CELL_DATA[cat.name];
+  if (!sample || !cat.enabled) return '—';
+  const total = sample.counts.reduce((a, b) => a + (b || 0), 0);
+  return total || '—';
+}
+
+function renderRoomTable(tableEl, dates, { editable = false } = {}) {
+  if (!tableEl) return;
+
+  const enabledCategories = OFFERED_ROOM_CATEGORIES.filter((cat) => cat.enabled);
+
+  const headerGroup = enabledCategories.map(
+    (cat) => `<th colspan="2" class="group-end">${cat.name}</th>`
+  ).join('');
+
+  const subHeader = enabledCategories.map(
+    () =>
+      `<th class="sub-col">Count</th><th class="sub-col group-end">Rate</th>`
+  ).join('');
+
+  const bodyRows = dates
+    .map((dateLabel, rowIndex) => {
+      const cells = enabledCategories.map((cat) => {
+        const count = cellValue(cat, rowIndex, 'counts');
+        const rate = cellValue(cat, rowIndex, 'rates');
+        
+        if (editable) {
+          return `
+            <td class="check-target"><span class="cell-text">${count}</span><input type="text" class="cell-input" value="${count === '—' ? '' : count}"></td>
+            <td class="group-end"><span class="cell-text">${rate}</span><input type="text" class="cell-input" value="${rate === '—' ? '' : rate}"></td>`;
+        }
+        return `<td class="check-target">${count}</td><td class="group-end">${rate}</td>`;
+      }).join('');
+      const deleteBtn = editable ? '<span class="row-delete">&times;</span>' : '';
+      return `
+        <tr>
+          <td class="date-col check-target">${deleteBtn}${dateLabel}</td>
+          ${cells}
+          <td class="total-col" style="font-weight: 500;">${sumCountsForRow(rowIndex) || '—'}</td>
+        </tr>`;
+    })
+    .join('');
+
+  const footerCells = enabledCategories.map((cat) => {
+    const total = sumCountsForCategory(cat);
+    return `<td>${total}</td><td class="group-end">—</td>`;
+  }).join('');
+
+  const grandTotal = dates.reduce((sum, _, rowIndex) => sum + sumCountsForRow(rowIndex), 0);
+
+  tableEl.innerHTML = `
+    <thead>
+      <tr>
+        <th class="date-col" rowspan="2">Date</th>
+        ${headerGroup}
+        <th class="total-col" rowspan="2" style="min-width: 60px;">Total</th>
+      </tr>
+      <tr>${subHeader}</tr>
+    </thead>
+    <tbody>${bodyRows}</tbody>
+    <tfoot>
+      <tr class="total-row">
+        <td class="date-col total-label">Total rooms</td>
+        ${footerCells}
+        <td class="total-col">${grandTotal || '—'}</td>
+      </tr>
+    </tfoot>`;
+}
+
+function initRoomGrids() {
+  renderCategoryCheckboxes(document.getElementById('period-1-categories'));
+  renderCategoryCheckboxes(document.getElementById('period-2-categories'));
+  renderRoomTable(document.getElementById('period-1-table'), PERIOD_1_DATES, { editable: true });
+  renderRoomTable(document.getElementById('period-2-table'), PERIOD_2_DATES, { editable: true });
+}
+
+document.addEventListener('DOMContentLoaded', initRoomGrids);
+</script>
 <script>
 let currentFlow = null; 
 let simFail = false;
